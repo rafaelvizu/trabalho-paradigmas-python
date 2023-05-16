@@ -3,3 +3,5 @@
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/trabalho-paradigmas-python.iml
 /.idea/vcs.xml
+__pycache__/
+
