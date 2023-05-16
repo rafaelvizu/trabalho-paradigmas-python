@@ -4,12 +4,12 @@ from selenium.webdriver.chrome.service import Service
 
 
 class Config:
-    navegador = webdriver.Chrome(ChromeDriverManager().install())
     service = Service(ChromeDriverManager().install())
+    browser = webdriver.Chrome(service=service)
 
     @staticmethod
-    def get_navegador():
-        return Config.navegador
+    def get_browser():
+        return Config.browser
 
     @staticmethod
     def get_service():
