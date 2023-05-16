@@ -42,6 +42,11 @@ def save_xlsx_file(products):
     worksheet.write('B1', 'Preço atual')
     worksheet.write('C1', 'Preço antigo')
 
+    worksheet.set_column('A:A', 50)
+    worksheet.set_column('B:B', 15)
+    worksheet.set_column('C:C', 15)
+
+
     for i in range(len(products)):
         worksheet.write(f'A{i + 2}', products[i]['name'])
         worksheet.write(f'B{i + 2}', products[i]['current_price'])
