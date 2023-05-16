@@ -8,5 +8,4 @@ if __name__ == '__main__':
 
     email = os.getenv('EMAIL')
     password = os.getenv('PASSWORD')
-
     login = Login(email, password)

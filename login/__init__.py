@@ -1,6 +1,9 @@
 from config import Config
 from selenium.webdriver.common.by import By
 from time import sleep
+from helpers import get_default_sleep
+
+DEFAULT_SLEEP = get_default_sleep()
 
 
 class Login:
@@ -12,14 +15,14 @@ class Login:
 
     def start(self):
         self.nav.get('https://estudante.estacio.br/login')
-        sleep(2)
+        sleep(DEFAULT_SLEEP)
 
         # procurar o elemento
         bt = self.nav.find_element(By.CSS_SELECTOR,
             '#section-login > div > div > div > section > div.sc-gKRMOK.hWvdtC > button')
         bt.click()
 
-        sleep(2)
+        sleep(DEFAULT_SLEEP)
 
         form_email = self.nav.find_element(By.CSS_SELECTOR, '#i0116')
         # colocar o email
@@ -28,7 +31,7 @@ class Login:
         btn_proximo = self.nav.find_element(By.CSS_SELECTOR, '#idSIButton9')
         btn_proximo.click()
 
-        sleep(2)
+        sleep(DEFAULT_SLEEP)
 
         form_password = self.nav.find_element(By.CSS_SELECTOR, '#i0118')
 
@@ -42,4 +45,4 @@ class Login:
         btn_nao = self.nav.find_element(By.CSS_SELECTOR, '#idBtn_Back')
         btn_nao.click()
 
-        sleep(50)
+        sleep(DEFAULT_SLEEP)
