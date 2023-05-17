@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 class Config:
     service = Service(ChromeDriverManager().install())
     browser = webdriver.Chrome(service=service)
+    browser.maximize_window()
 
     @staticmethod
     def get_browser():

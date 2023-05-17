@@ -1,15 +1,15 @@
 from src.helpers.html_actions import HtmlActions
-from src.helpers import input_search_product
-from src.helpers import save_xlsx_file
+from src.helpers import HelpersFunc
 from time import sleep
 
 DEFAULT_SLEEP = 5
 
 
 class SearchProducts:
-    def __init__(self, email, password):
+    def __init__(self, email, password, search):
         self.email = email
         self.password = password
+        self.search = search
         self.products = list()
 
         # fazer operações com o navegador
@@ -65,8 +65,7 @@ class SearchProducts:
 
     def _get_product(self):
         # pesquisar produto
-        search = input_search_product()
-        HtmlActions.get_element_by_css_selector_and_send_key('#input-busca', search)
+        HtmlActions.get_element_by_css_selector_and_send_key('#input-busca', self.search)
         HtmlActions.get_element_by_css_selector_and_click('#barraBuscaKabum > div > form > button')
 
         sleep(DEFAULT_SLEEP)
@@ -148,6 +147,6 @@ class SearchProducts:
                 'link': product_link
             })
 
-        save_xlsx_file(self.products)
+        HelpersFunc.save_xlsx_file(self.products)
 
 # Autor: Rafael Vizú - https://github.com/rafaelvizu/trabalho-paradigmas-python/
