@@ -14,3 +14,5 @@ class Config:
     @staticmethod
     def get_service():
         return Config.service
+
+# Autor: Rafael Vizú - https://github.com/rafaelvizu/trabalho-paradigmas-python/

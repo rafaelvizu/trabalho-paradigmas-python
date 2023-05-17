@@ -1,10 +1,9 @@
-from time import sleep
-from src.helpers import get_default_sleep
 from src.helpers.html_actions import HtmlActions
 from src.helpers import input_search_product
 from src.helpers import save_xlsx_file
+from time import sleep
 
-DEFAULT_SLEEP = get_default_sleep()
+DEFAULT_SLEEP = 5
 
 
 class SearchProducts:
@@ -17,6 +16,7 @@ class SearchProducts:
         self._login()
         self._access_link()
         self._get_product()
+
         HtmlActions.nav.close()
 
 
@@ -24,11 +24,11 @@ class SearchProducts:
         HtmlActions.nav.get('https://estudante.estacio.br/login')
         sleep(DEFAULT_SLEEP)
 
-        # botão de search_products
+        # botão de login
         HtmlActions.get_element_by_css_selector_and_click(
-            '#section-search_products > div > div > div > section > div.sc-gKRMOK.hWvdtC > button')
-        sleep(DEFAULT_SLEEP)
+            '#section-login > div > div > div.sc-cNNTdL.hItoDh.colLogin > section > div.sc-gKRMOK.hWvdtC > button')
 
+        sleep(DEFAULT_SLEEP)
         # colocar o email
         HtmlActions.get_element_by_css_selector_and_send_key('#i0116', self.email)
 
@@ -70,40 +70,84 @@ class SearchProducts:
         HtmlActions.get_element_by_css_selector_and_click('#barraBuscaKabum > div > form > button')
 
         sleep(DEFAULT_SLEEP)
-        old_prices_elements = HtmlActions.get_elements_by_css_selector(
-            'div.availablePricesCard > .oldPriceCard')
-        current_prices_elements = HtmlActions.get_elements_by_css_selector(
-            'div.availablePricesCard > span.priceCard')
-        names_elements = HtmlActions.get_elements_by_css_selector(
-            'main > div > a > div > button > div > h2 > span.nameCard')
 
-        old_prices = list()
-        current_prices = list()
-        names = list()
+        # ordenar por preço crescente
+        HtmlActions.get_element_by_css_selector_and_click(
+            '#Filter > div.sc-8c5ed0b2-1.eNJXYl > select > option:nth-child(2)')
 
-        for element in old_prices_elements:
-            if element.text != '':
-                old_prices.append(element.text)
-                continue
-            old_prices.append(None)
+        sleep(DEFAULT_SLEEP)
 
-        for element in current_prices_elements:
-            if element.text != '':
-                current_prices.append(element.text)
-                continue
-            current_prices.append(None)
+        # colocar 100 produtos por página
+        HtmlActions.get_element_by_css_selector_and_click('#Filter > label > select > option:nth-child(5)')
+        sleep(DEFAULT_SLEEP)
 
-        for element in names_elements:
-            if element.text != '':
-                names.append(element.text)
-                continue
-            names.append(None)
 
-        for i in range(len(names)):
+        # vamos ver quantos produtos temos
+        products_elements = HtmlActions.get_elements_by_css_selector('.productCard')
+        products_count = len(products_elements)
+
+        # vamos acessar um por um e pegar as informações
+        for i in range(0, products_count):
+            product_element = products_elements[i]
+
+            # vamos pegar o nome do produto
+            product_name = HtmlActions.get_element_by_css_selector_element(
+                '.nameCard', product_element)
+
+            if product_name is None:
+                product_name = 'Produto sem nome'
+            else:
+                product_name = product_name.text
+
+            try:
+                # vamos o tempo de promoção
+                product_promotion_time = HtmlActions.get_element_by_css_selector_element(
+                    '.countdownOffer', product_element)
+
+                if product_promotion_time is None:
+                    product_promotion_time = 'Nenhuma promoção'
+                else:
+                    product_promotion_time = product_promotion_time.text
+            except:
+                product_promotion_time = 'Nenhuma promoção'
+
+            # vamos pegar o preço original do produto
+            if product_promotion_time == 'Nenhuma promoção':
+                product_price = HtmlActions.get_element_by_css_selector_element(
+                    '.priceCard', product_element)
+                product_price = product_price.text.replace('R$', '')
+            else:
+                product_price = HtmlActions.get_element_by_css_selector_element(
+                    '.oldPriceCard', product_element)
+                product_price = product_price.text.replace('R$', '')
+
+            if product_price is None:
+                product_price = 'Produto sem preço'
+
+            # vamos pegar o preço promocional do produto
+            if product_promotion_time != 'Nenhuma promoção':
+                product_promotion_price = HtmlActions.get_element_by_css_selector_element(
+                    '.priceCard', product_element)
+                product_promotion_price = product_promotion_price.text.replace('R$', '')
+
+                if product_promotion_price is None:
+                    product_promotion_price = 'Produto sem preço promocional'
+            else:
+                product_promotion_price = 'Nenhuma promoção'
+
+            # pegar link do produto
+            product_link = HtmlActions.get_element_by_css_selector_element(
+                'a', product_element)
+            product_link = product_link.get_attribute('href')
+
             self.products.append({
-                'name': names[i],
-                'old_price': old_prices[i],
-                'current_price': current_prices[i],
+                'name': product_name,
+                'promotion_time': product_promotion_time,
+                'price': product_price,
+                'promotion_price': product_promotion_price,
+                'link': product_link
             })
 
         save_xlsx_file(self.products)
+
+# Autor: Rafael Vizú - https://github.com/rafaelvizu/trabalho-paradigmas-python/
