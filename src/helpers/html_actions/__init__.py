@@ -26,5 +26,9 @@ class HtmlActions:
         return elements
 
     @staticmethod
+    def get_element_by_css_selector_element(css_selector, element):
+        return element.find_element(By.CSS_SELECTOR, css_selector)
+
+    @staticmethod
     def switch_to_new_tab(window_number):
         HtmlActions.nav.switch_to.window(HtmlActions.nav.window_handles[window_number])

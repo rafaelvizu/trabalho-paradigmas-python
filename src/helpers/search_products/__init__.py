@@ -71,40 +71,62 @@ class SearchProducts:
         HtmlActions.get_element_by_css_selector_and_click('#barraBuscaKabum > div > form > button')
 
         sleep(DEFAULT_SLEEP)
-        old_prices_elements = HtmlActions.get_elements_by_css_selector(
-            'div.availablePricesCard > .oldPriceCard')
-        current_prices_elements = HtmlActions.get_elements_by_css_selector(
-            'div.availablePricesCard > span.priceCard')
-        names_elements = HtmlActions.get_elements_by_css_selector(
-            'main > div > a > div > button > div > h2 > span.nameCard')
 
-        old_prices = list()
-        current_prices = list()
-        names = list()
+        # vamos ver quantos produtos temos
+        products_elements = HtmlActions.get_elements_by_css_selector('.productCard')
+        products_count = len(products_elements)
 
-        for element in old_prices_elements:
-            if element.text != '':
-                old_prices.append(element.text)
-                continue
-            old_prices.append(None)
+        # vamos acessar um por um e pegar as informações
+        for i in range(0, products_count):
+            product_element = products_elements[i]
 
-        for element in current_prices_elements:
-            if element.text != '':
-                current_prices.append(element.text)
-                continue
-            current_prices.append(None)
+            # pegar o nome do produto
+            name_element = HtmlActions.get_element_by_css_selector_element('.nameCard', product_element)
+            if name_element is not None:
+                name = name_element.text
+            else:
+                name = 'Não encontrado'
 
-        for element in names_elements:
-            if element.text != '':
-                names.append(element.text)
-                continue
-            names.append(None)
+            # pegar preço antigo, se houver
+            old_price_element = HtmlActions.get_element_by_css_selector_element('.oldPriceCard', product_element)
+            if old_price_element is not None:
+                old_price = old_price_element.text
+            else:
+                old_price = 'Não encontrado'
 
-        for i in range(len(names)):
+            # pegar preço atual
+            current_price_element = HtmlActions.get_element_by_css_selector_element('.priceCard', product_element)
+            if current_price_element is not None:
+                current_price = current_price_element.text
+            else:
+                current_price = 'Não encontrado'
+
+            try:
+                # tempo de oferta
+                current_down_offer_element = HtmlActions.get_element_by_css_selector_element(
+                    '.countdownOffer', product_element)
+
+                if current_down_offer_element is not None:
+                    current_down_offer = current_down_offer_element.text
+                else:
+                    current_down_offer = 'Não encontrado'
+            except:
+                current_down_offer = 'Não encontrado'
+
+            # link do produto
+            link_element = HtmlActions.get_element_by_css_selector_element('a', product_element)
+            if link_element is not None:
+                link = link_element.get_attribute('href')
+            else:
+                link = 'Não encontrado'
+
+            # adicionar produto na lista
             self.products.append({
-                'name': names[i],
-                'old_price': old_prices[i],
-                'current_price': current_prices[i],
+                'name': name,
+                'old_price': old_price,
+                'current_price': current_price,
+                'current_down_offer': current_down_offer,
+                'link': link
             })
 
         save_xlsx_file(self.products)
