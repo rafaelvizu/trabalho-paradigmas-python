@@ -32,3 +32,5 @@ class HtmlActions:
     @staticmethod
     def switch_to_new_tab(window_number):
         HtmlActions.nav.switch_to.window(HtmlActions.nav.window_handles[window_number])
+
+# Autor: Rafael Vizú - https://github.com/rafaelvizu/trabalho-paradigmas-python/
