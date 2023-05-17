@@ -1,4 +1,5 @@
 import os
+from os import path
 import xlsxwriter
 from datetime import datetime
 import tkinter as tk
@@ -8,7 +9,6 @@ class HelpersFunc:
     @staticmethod
     def input_login_gui():
         window = tk.Tk()
-        # tela de login com os componentes grandes e bonitos
         window.title('Login')
         window.geometry('240x200')
         window.configure(background='white')
@@ -62,8 +62,16 @@ class HelpersFunc:
 
     @staticmethod
     def save_xlsx_file(products):
-        HelpersFunc.create_path_data_if_not_exists()
-        workbook = xlsxwriter.Workbook(f'data/products-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.xlsx')
+        path_pictures = path.join(os.environ['USERPROFILE'], 'Pictures')
+        HelpersFunc.create_path_data_if_not_exists(path_pictures)
+        path_file = path.join(path_pictures, 'products',
+                                f'products-search-{datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}.xlsx')
+        
+        print(path_file)
+        print(path_pictures)
+        
+
+        workbook = xlsxwriter.Workbook(path_file)
         worksheet = workbook.add_worksheet()
 
         worksheet.set_column('A:A', 50)
@@ -86,15 +94,14 @@ class HelpersFunc:
             worksheet.write(f'D{i + 2}', product['promotion_time'])
             worksheet.write(f'E{i + 2}', product['link'])
 
-        path = os.path.abspath(workbook.filename)
-        print(f'Arquivo salvo em: {path}')
+        print(f'Arquivo salvo em: {path_file}')
 
-        os.startfile('data')
+        os.startfile(path.join(path_pictures, 'products'))
         workbook.close()
 
     @staticmethod
-    def create_path_data_if_not_exists():
-        if not os.path.exists('data'):
-            os.mkdir('../data')
+    def create_path_data_if_not_exists(file_path):
+        if not path.exists(path.join(file_path, 'products')):
+            os.mkdir(os.path.join(file_path, 'products'))
 
 # Autor: Rafael Vizú - https://github.com/rafaelvizu/trabalho-paradigmas-python/
