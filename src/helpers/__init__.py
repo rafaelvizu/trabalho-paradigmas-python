@@ -12,6 +12,7 @@ class HelpersFunc:
         window.title('Login')
         window.geometry('240x200')
         window.configure(background='white')
+        window.resizable(False, False)
 
         # componentes
         label_email = tk.Label(window, text='Email', bg='white', fg='black')
@@ -43,6 +44,7 @@ class HelpersFunc:
         window.title('Pesquisar produto')
         window.geometry('240x200')
         window.configure(background='white')
+        window.resizable(False, False)
 
         label_search = tk.Label(window, text='Pesquisar produto', bg='white', fg='black')
         label_search.place(x=10, y=10)
@@ -62,6 +64,9 @@ class HelpersFunc:
 
     @staticmethod
     def save_xlsx_file(products):
+        # ordenar por preço
+        products = sorted(products, key=lambda k: k['price'])
+
         path_pictures = path.join(os.environ['USERPROFILE'], 'Pictures')
         HelpersFunc.create_path_data_if_not_exists(path_pictures)
         path_file = path.join(path_pictures, 'products',
@@ -83,7 +88,22 @@ class HelpersFunc:
         worksheet.write('E1', 'Link do produto')
 
         for i in range(0, len(products)):
+
             product = products[i]
+
+            if product['price'] == -1 or product['price'] is None:
+                product['price'] = 'Não informado'
+            else:
+                product['price'] = f'R$ {float(product["price"]):.2f}'
+
+            if product['promotion_price'] is None:
+                product['promotion_price'] = 'Não informado'
+            else:
+                product['promotion_price'] = f'R$ {float(product["promotion_price"]):.2f}'
+
+            if product['promotion_time'] is None:
+                product['promotion_time'] = 'Não informado'
+
             worksheet.write(f'A{i + 2}', product['name'])
             worksheet.write(f'B{i + 2}', product['price'])
             worksheet.write(f'C{i + 2}', product['promotion_price'])

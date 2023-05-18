@@ -19,7 +19,6 @@ class SearchProducts:
 
         HtmlActions.nav.close()
 
-
     def _login(self):
         HtmlActions.nav.get('https://estudante.estacio.br/login')
         sleep(DEFAULT_SLEEP)
@@ -57,7 +56,8 @@ class SearchProducts:
         sleep(DEFAULT_SLEEP)
 
         # acessar atividade
-        HtmlActions.get_element_by_css_selector_and_click('#acessar-conteudo-complementar-link-646160d3efeb4f0025211737')
+        HtmlActions.get_element_by_css_selector_and_click(
+            '#acessar-conteudo-complementar-link-646160d3efeb4f0025211737')
         sleep(DEFAULT_SLEEP)
 
         # pegar nova aba aberta
@@ -79,7 +79,6 @@ class SearchProducts:
         # colocar 100 produtos por página
         HtmlActions.get_element_by_css_selector_and_click('#Filter > label > select > option:nth-child(5)')
         sleep(DEFAULT_SLEEP)
-
 
         # vamos ver quantos produtos temos
         products_elements = HtmlActions.get_elements_by_css_selector('.productCard')
@@ -103,36 +102,42 @@ class SearchProducts:
                 product_promotion_time = HtmlActions.get_element_by_css_selector_element(
                     '.countdownOffer', product_element)
 
-                if product_promotion_time is None:
-                    product_promotion_time = 'Nenhuma promoção'
-                else:
+                if product_promotion_time is not None:
                     product_promotion_time = product_promotion_time.text
             except:
-                product_promotion_time = 'Nenhuma promoção'
+                product_promotion_time = None
 
             # vamos pegar o preço original do produto
-            if product_promotion_time == 'Nenhuma promoção':
+            if product_promotion_time is None:
                 product_price = HtmlActions.get_element_by_css_selector_element(
                     '.priceCard', product_element)
-                product_price = product_price.text.replace('R$', '')
             else:
                 product_price = HtmlActions.get_element_by_css_selector_element(
                     '.oldPriceCard', product_element)
-                product_price = product_price.text.replace('R$', '')
 
-            if product_price is None:
-                product_price = 'Produto sem preço'
+            product_price = product_price.text.replace('R$', '')
+            product_price = product_price.replace('.', '')
+            product_price = product_price.replace(',', '.')
+            product_price = product_price.replace(' ', '')
+
+            if product_price == '---' or product_price is None or not product_price:
+                product_price = -1
+            else:
+                product_price = float(product_price)
 
             # vamos pegar o preço promocional do produto
-            if product_promotion_time != 'Nenhuma promoção':
+            if product_promotion_time is not None:
                 product_promotion_price = HtmlActions.get_element_by_css_selector_element(
                     '.priceCard', product_element)
                 product_promotion_price = product_promotion_price.text.replace('R$', '')
+                product_promotion_price = product_promotion_price.replace('.', '')
+                product_promotion_price = product_promotion_price.replace(',', '.')
+                product_promotion_price = product_promotion_price.replace(' ', '')
 
                 if product_promotion_price is None:
-                    product_promotion_price = 'Produto sem preço promocional'
+                    product_promotion_price = None
             else:
-                product_promotion_price = 'Nenhuma promoção'
+                product_promotion_price = None
 
             # pegar link do produto
             product_link = HtmlActions.get_element_by_css_selector_element(
