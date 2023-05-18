@@ -65,11 +65,7 @@ class HelpersFunc:
         path_pictures = path.join(os.environ['USERPROFILE'], 'Pictures')
         HelpersFunc.create_path_data_if_not_exists(path_pictures)
         path_file = path.join(path_pictures, 'products',
-                                f'products-search-{datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}.xlsx')
-        
-        print(path_file)
-        print(path_pictures)
-        
+                              f'products-search-{datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}.xlsx')
 
         workbook = xlsxwriter.Workbook(path_file)
         worksheet = workbook.add_worksheet()
