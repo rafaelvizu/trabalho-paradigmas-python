@@ -27,7 +27,7 @@ O programa permite ao usuário realizar as seguintes ações:
 * Entrar no site da Kabum.
 * Pesquisar um produto digitado pelo usuário no terminal.
 * Filtrar os resultados por ordem crescente e 100 páginas.
-* Criar uma planilha XLSX na pasta "imagens/data", localizada no computador
+* Criar uma planilha XLSX na pasta "Pictures\products", localizada no computador
 * Na planilha, serão registrados o nome do produto, preço, preço promocional, tempo de promoção e link.
 
 ## Como executar o projeto
